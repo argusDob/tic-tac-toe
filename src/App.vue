@@ -1,19 +1,60 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Grid :icon="icon" @onCellClick="onCellClick" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Grid from "./components/Grid.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    Grid,
+  },
+  data() {
+    return {
+      icon: "cross",
+      spaces: [],
+      OPlayer: "O",
+      XPlayer: "X",
+    };
+  },
+  methods: {
+    onCellClick(id) {
+      this.setupIcon()
+      
+      if (!this.spaces[id]) {
+        this.currentPlayer =
+          this.currentPlayer === this.OPlayer ? this.XPlayer : this.OPlayer;
+        this.spaces[id] = this.currentPlayer;
+        if (this.playerWon(this.currentPlayer)) {
+          console.log(this.currentPlayer);
+        }
+      }
+    },
+    setupIcon(){
+      this.icon = (this.currentPlayer === "O") ? "circle" : "cross";
+    },
+    playerWon(player) {
+      // console.log(this.spaces[0])
+      if (this.spaces[0] === player) {
+        if (this.spaces[1] === player && this.spaces[2] === player) return true;
+        if (this.spaces[3] === player && this.spaces[6] === player) return true;
+        if (this.spaces[4] === player && this.spaces[8] === player) return true;
+      }
+      if (this.spaces[8] === player) {
+        if (this.spaces[2] === player && this.spaces[5] === player) return true;
+        if (this.spaces[6] === player && this.spaces[7] === player) return true;
+      }
+      if (this.spaces[4] === player) {
+        if (this.spaces[1] === player && this.spaces[7] === player) return true;
+        if (this.spaces[3] === player && this.spaces[5] === player) return true;
+        if (this.spaces[2] === player && this.spaces[6] === player) return true;
+      }
+    },
+  },
+};
 </script>
 
 <style>
