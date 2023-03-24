@@ -15,43 +15,58 @@ export default {
   data() {
     return {
       icon: "cross",
-      spaces: [],
+      board: [" ", " ", " ", " ", " ", " ", " ", " ", " "],
       OPlayer: "O",
       XPlayer: "X",
     };
   },
   methods: {
     onCellClick(id) {
-      this.setupIcon()
-      
-      if (!this.spaces[id]) {
-        this.currentPlayer =
-          this.currentPlayer === this.OPlayer ? this.XPlayer : this.OPlayer;
-        this.spaces[id] = this.currentPlayer;
-        if (this.playerWon(this.currentPlayer)) {
-          console.log(this.currentPlayer);
+      this.currentPlayer =
+        this.currentPlayer === this.OPlayer ? this.XPlayer : this.OPlayer;
+      this.setupIcon();
+      this.updateBoard(id);
+      if (this.checkWinner()) {
+        console.log(this.currentPlayer);
+      } else if (this.checkWinner() === 'draw'){
+        console.log("DRAW")
+      }
+    },
+    setupIcon() {
+      this.icon = this.currentPlayer === "O" ? "circle" : "cross";
+    },
+    updateBoard(cellId) {
+      this.board[cellId] = this.currentPlayer;
+    },
+    checkWinner() {
+      const winningCombinations = this.getWinningCombinationsDefinition();
+      for (let comb of winningCombinations) {
+        if (
+          this.board[comb[0]] == this.board[comb[1]] &&
+          this.board[comb[1]] == this.board[comb[2]] &&
+          this.board[comb[0]] != " "
+        ) {
+          return true;
         }
       }
+      if (this.board.every((cell) => cell != " ")) {
+          return "draw";
+        }
+      return false;
     },
-    setupIcon(){
-      this.icon = (this.currentPlayer === "O") ? "circle" : "cross";
-    },
-    playerWon(player) {
-      // console.log(this.spaces[0])
-      if (this.spaces[0] === player) {
-        if (this.spaces[1] === player && this.spaces[2] === player) return true;
-        if (this.spaces[3] === player && this.spaces[6] === player) return true;
-        if (this.spaces[4] === player && this.spaces[8] === player) return true;
-      }
-      if (this.spaces[8] === player) {
-        if (this.spaces[2] === player && this.spaces[5] === player) return true;
-        if (this.spaces[6] === player && this.spaces[7] === player) return true;
-      }
-      if (this.spaces[4] === player) {
-        if (this.spaces[1] === player && this.spaces[7] === player) return true;
-        if (this.spaces[3] === player && this.spaces[5] === player) return true;
-        if (this.spaces[2] === player && this.spaces[6] === player) return true;
-      }
+    getWinningCombinationsDefinition() {
+      const winningCombinations = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8], // horizontal
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8], // vertical
+        [0, 4, 8],
+        [2, 4, 6], // diagonal
+      ];
+
+      return winningCombinations;
     },
   },
 };
