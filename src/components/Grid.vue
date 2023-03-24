@@ -1,29 +1,26 @@
 <template>
-  <div class="grid">
+  <div class="grid" :class="{ grid__disabled: isGameFinished }">
     <div
       class="grid__cell"
       :id="item"
       v-for="item in grid.row1"
       :key="item"
       v-on:click="onClick($event)"
-    >
-    </div>
+    ></div>
     <div
       class="grid__cell"
       :id="item"
       v-for="item in grid.row2"
       :key="item"
       v-on:click="onClick($event)"
-    >
-    </div>
+    ></div>
     <div
       class="grid__cell"
       :id="item"
       v-for="item in grid.row3"
       :key="item"
       v-on:click="onClick($event)"
-    >
-    </div>
+    ></div>
   </div>
 </template>
 
@@ -33,6 +30,10 @@ export default {
   props: {
     icon: {
       type: String,
+    },
+    isGameFinished: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -82,7 +83,8 @@ export default {
     background-image: url("../assets/circle_icon.svg");
   }
 
-  &__cell-disabled {
+  &__cell-disabled,
+  &__disabled {
     pointer-events: none;
   }
 }

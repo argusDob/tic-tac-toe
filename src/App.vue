@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <Grid :icon="icon" @onCellClick="onCellClick" />
+    <Grid :icon="icon" 
+    :isGameFinished="isGameFinished"
+    @onCellClick="onCellClick" />
   </div>
 </template>
 
@@ -14,8 +16,9 @@ export default {
   },
   data() {
     return {
-      icon: "cross",
       board: [" ", " ", " ", " ", " ", " ", " ", " ", " "],
+      icon: "cross",
+      isGameFinished: false,
       OPlayer: "O",
       XPlayer: "X",
     };
@@ -26,10 +29,14 @@ export default {
         this.currentPlayer === this.OPlayer ? this.XPlayer : this.OPlayer;
       this.setupIcon();
       this.updateBoard(id);
+      console.log(this.checkWinner());
       if (this.checkWinner()) {
-        console.log(this.currentPlayer);
-      } else if (this.checkWinner() === 'draw'){
-        console.log("DRAW")
+        console.log("The winner is:", this.currentPlayer);
+        this.isGameFinished = true
+      } 
+      if (this.checkWinner() === "draw") {
+        this.isGameFinished = true
+        console.log("DRAW");
       }
     },
     setupIcon() {
@@ -39,7 +46,22 @@ export default {
       this.board[cellId] = this.currentPlayer;
     },
     checkWinner() {
+      // check for a draw
+      if (this.board.every((cell) => cell != " ") && !this.hasWinner()) {
+        return "draw";
+      }
+
+      // check for a winner
+      if (this.hasWinner()) {
+        return true;
+      }
+
+      return false;
+    },
+    hasWinner() {
       const winningCombinations = this.getWinningCombinationsDefinition();
+
+      // loop through winning combinations and check for a winner
       for (let comb of winningCombinations) {
         if (
           this.board[comb[0]] == this.board[comb[1]] &&
@@ -49,9 +71,6 @@ export default {
           return true;
         }
       }
-      if (this.board.every((cell) => cell != " ")) {
-          return "draw";
-        }
       return false;
     },
     getWinningCombinationsDefinition() {
